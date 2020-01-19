@@ -2,11 +2,10 @@ name: "build-test"
 on: [push]
 
 jobs:
-  build: # make sure build/ci work properly
+  test:
     runs-on: ubuntu-latest
     steps:
-    - name: "npm ci"
-      run: npm ci
-
-    - name: "npm run build"
-      run: npm run build
+    - uses: actions/checkout@v1
+    - uses: ./
+      with:
+        github-token: ${{ secrets.github_token }}

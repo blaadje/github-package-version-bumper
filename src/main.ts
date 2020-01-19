@@ -6,12 +6,12 @@ async function run(): Promise<void> {
 
   const octokit = new github.GitHub(myToken)
 
-  const foo = await octokit.repos.listBranches({
+  const tags = await octokit.repos.listTags({
     owner: github.context.repo.owner,
     repo: github.context.repo.repo
   })
 
-  console.log(foo)
+  console.log(tags)
 }
 
 run()

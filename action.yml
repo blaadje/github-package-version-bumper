@@ -1,10 +1,10 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'github-package-version-bumper'
+description: 'Allows you to automatically bump version with tag creation'
+author: 'blaadje'
 inputs:
   github-token:
     description: GitHub authentication token
     required: true
 runs:
   using: 'node12'
-  main: 'lib/main.js'
+  main: 'index.js'

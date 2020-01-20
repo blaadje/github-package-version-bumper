@@ -124,7 +124,7 @@ async function run() {
   })
   octokit.repos.createRelease({
     ...settings,
-    draft: true,
+    prerelease: true,
     tag_name: `v${newVersion}`
   })
 }

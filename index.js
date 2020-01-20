@@ -122,6 +122,10 @@ async function run() {
     ref: `refs/tags/v${newVersion}`,
     sha: data.sha
   })
+  octokit.repos.createRelease({
+    ...settings,
+    tag_name: `v${newVersion}`
+  })
 }
 
 run()

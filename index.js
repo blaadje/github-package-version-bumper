@@ -34,7 +34,7 @@ async function tags() {
   try {
     const { data } = await octokit.repos.listTags(settings)
 
-    return (data.length && data) || undefined
+    return (data.length && data[0].name) || undefined
   } catch (error) {
     core.setFailed(error.message)
   }

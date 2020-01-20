@@ -74,29 +74,31 @@ async function getCommits() {
 
 async function updatePackageJson(newVersion) {
   const path = 'package.json'
-  const { data: existingFile } = await octokit.repos.getContents({
-    ...settings,
-    path
-  })
-
-  const file = JSON.parse(
-    Buffer.from(existingFile.content, 'base64').toString('utf-8')
-  )
-  const updatedFile = { ...file, version: newVersion }
-
-  const content = Buffer.from(JSON.stringify(updatedFile, null, 2)).toString(
-    'base64'
-  )
-
   try {
-    const { data } = await octokit.repos.createOrUpdateFile({
+    const { data: existingFile } = await octokit.repos.getContents({
       ...settings,
-      path,
-      message: `v${newVersion}`,
-      sha: existingFile.sha,
-      content
+      path
     })
-    return data.commit.sha
+    const file = JSON.parse(
+      Buffer.from(existingFile.content, 'base64').toString('utf-8')
+    )
+    const updatedFile = { ...file, version: newVersion }
+
+    const content = Buffer.from(JSON.stringify(updatedFile, null, 2)).toString(
+      'base64'
+    )
+    try {
+      const { data } = await octokit.repos.createOrUpdateFile({
+        ...settings,
+        path,
+        message: `v${newVersion}`,
+        sha: existingFile.sha,
+        content
+      })
+      return data.commit.sha
+    } catch (error) {
+      core.setFailed(error.message)
+    }
   } catch (error) {
     core.setFailed(error.message)
   }
@@ -106,8 +108,6 @@ async function run() {
   const fetchedTags = await tags()
   const commits = await getCommits()
   const { newVersion } = bump(fetchedTags, commits)
-  console.log(fetchedTags)
-  console.log(newVersion)
   const sha = await updatePackageJson(newVersion, commits)
   const { data } = await octokit.git.createTag({
     ...settings,

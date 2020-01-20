@@ -30,7 +30,7 @@ function bump(previousVersion = '0.0.0', commits = {}) {
   return { bumpType, newVersion: semver.inc(String(previousVersion), bumpType) }
 }
 
-async function tags() {
+async function latestTag() {
   try {
     const { data } = await octokit.repos.listTags(settings)
 
@@ -83,10 +83,10 @@ async function updatePackageJson(newVersion) {
       Buffer.from(existingFile.content, 'base64').toString('utf-8')
     )
     const updatedFile = { ...file, version: newVersion }
-
     const content = Buffer.from(JSON.stringify(updatedFile, null, 2)).toString(
       'base64'
     )
+
     try {
       const { data } = await octokit.repos.createOrUpdateFile({
         ...settings,
@@ -105,14 +105,21 @@ async function updatePackageJson(newVersion) {
 }
 
 async function run() {
-  const fetchedTags = await tags()
+  const currentVersion = await latestTag()
   const commits = await getCommits()
-  const { newVersion } = bump(fetchedTags, commits)
-  const sha = await updatePackageJson(newVersion, commits)
+  const { newVersion } = bump(currentVersion, commits)
+  const sha = await updatePackageJson(newVersion)
+
+  const isRollback = github.context.ref !== 'refs/heads/master'
+
+  const name = isRollback
+    ? `v${newVersion} - Rollback of ${currentVersion}`
+    : `v${newVersion}`
+
   const { data } = await octokit.git.createTag({
     ...settings,
     tag: `v${newVersion}`,
-    message: `v${newVersion}`,
+    message: name,
     object: sha,
     type: 'commit'
   })
@@ -122,9 +129,12 @@ async function run() {
     ref: `refs/tags/v${newVersion}`,
     sha: data.sha
   })
-  octokit.repos.createRelease({
+
+  await octokit.repos.createRelease({
     ...settings,
-    tag_name: `v${newVersion}`
+    tag_name: `v${newVersion}`,
+    name,
+    draft: true
   })
 }
 

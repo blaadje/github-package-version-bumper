@@ -1,6 +1,6 @@
 {
   "name": "typescript-action",
-  "version": null,
+  "version": "0.0.1",
   "private": true,
   "description": "TypeScript template action",
   "main": "lib/main.js",

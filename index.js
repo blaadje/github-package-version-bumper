@@ -106,8 +106,8 @@ async function run() {
   const fetchedTags = await tags()
   const commits = await getCommits()
   const { newVersion } = bump(fetchedTags, commits)
-  console.log(fetchedTags)
   console.log(newVersion)
+  console.log(fetchedTags)
   const sha = await updatePackageJson(newVersion, commits)
   const { data } = await octokit.git.createTag({
     ...settings,

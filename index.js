@@ -55,7 +55,7 @@ async function getCommits() {
         return
       }
 
-      let type = message.substring(0, message.indexOf('('))
+      let type = message.substring(0, message.indexOf(':'))
       type = type === 'prefeat' ? 'feat' : type
 
       if (!CHANGELOG_ORDER.includes(type)) {

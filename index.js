@@ -51,12 +51,12 @@ async function latestTag() {
   }
 }
 
-async function getCommits(currentVersionSha) {
+async function getCommits(currentVersion) {
   try {
     const commits = {}
     const { data } = await octokit.repos.listCommits({
       ...settings,
-      ...(currentVersionSha && { sha: currentVersionSha })
+      ...(currentVersion && { sha: `refs/tags/${currentVersion}` })
     })
     
     data.forEach(({ commit }) => {
@@ -119,8 +119,8 @@ async function updatePackageJson(newVersion) {
 }
 
 async function run() {
-  const { currentVersionName, currentVersionSha } = await latestTag()
-  const commits = await getCommits(currentVersionSha)
+  const { currentVersion } = await latestTag()
+  const commits = await getCommits(currentVersion)
   const { newVersion } = bump(currentVersionName, commits)
   const sha = await updatePackageJson(newVersion)
 

@@ -35,18 +35,28 @@ async function latestTag() {
   try {
     const { data } = await octokit.repos.listTags(settings)
     console.log(data)
+    if (!data.lenght) {
+      return {}
+    }
+
+    const lastTag = data[0]
+
     return {
-      currentVersion: (data.length && data[0].name) || undefined
+      currentVersionSha: lastTag.commit.sha,
+      currentVersionName: lastTag.name
     }
   } catch (error) {
     core.setFailed(error.message)
   }
 }
 
-async function getCommits() {
+async function getCommits(currentVersionSha) {
   try {
     const commits = {}
-    const { data } = await octokit.repos.listCommits(settings)
+    const { data } = await octokit.repos.listCommits({
+      ...settings,
+      sha: currentVersionSha
+    })
 
     data.forEach(({ commit }) => {
       const { message } = commit
@@ -108,9 +118,9 @@ async function updatePackageJson(newVersion) {
 }
 
 async function run() {
-  const { currentVersion } = await latestTag()
-  const commits = await getCommits()
-  const { newVersion } = bump(currentVersion, commits)
+  const { currentVersionName, currentVersionSha } = await latestTag()
+  const commits = await getCommits(currentVersionSha)
+  const { newVersion } = bump(currentVersionName, commits)
   const sha = await updatePackageJson(newVersion)
 
   const isRollback = github.context.ref !== 'refs/heads/master'

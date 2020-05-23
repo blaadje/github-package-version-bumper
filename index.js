@@ -10,6 +10,7 @@ const settings = {
   owner: github.context.repo.owner,
   repo: github.context.repo.repo
 }
+console.log('test')
 
 const CHANGELOG_ORDER = [
   'feat',

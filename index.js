@@ -91,6 +91,7 @@ async function updatePackageJson(newVersion, currentVersion) {
     const content = Buffer.from(JSON.stringify(updatedFile, null, 2)).toString(
       'base64'
     )
+    console.log('test')
 
     try {
       const { data } = await octokit.repos.createOrUpdateFile({

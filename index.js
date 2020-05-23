@@ -45,8 +45,8 @@ async function getCommits(currentVersion) {
     const commits = {}
     const { data } = await octokit.repos.compareCommits({
       ...settings,
-      base: 'master',
-      head: `refs/tags/${currentVersion}`,
+      base: `refs/tags/${currentVersion}`,
+      head: 'master',
     });
     console.log(data)
     

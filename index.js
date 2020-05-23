@@ -47,7 +47,7 @@ async function getCommits(currentVersion) {
       ...settings,
       ...(currentVersion && { sha: `refs/tags/${currentVersion}` })
     })
-    
+    console.log(currentVersion)
     console.log(data)
     
     data.forEach(({ commit }) => {

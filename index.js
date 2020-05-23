@@ -47,7 +47,11 @@ async function getCommits(currentVersion) {
       ...settings,
       ...(currentVersion && { sha: `refs/tags/${currentVersion}` })
     })
-    console.log(currentVersion)
+    const { data } = await octokit.repos.compareCommits({
+      ...settings,
+      base: 'master',
+      head: `refs/tags/${currentVersion}`,
+    });
     console.log(data)
     
     data.forEach(({ commit }) => {
@@ -77,8 +81,9 @@ async function getCommits(currentVersion) {
   }
 }
 
-async function updatePackageJson(newVersion) {
+async function updatePackageJson(newVersion, currentVersion) {
   const path = 'package.json'
+
   try {
     const { data: existingFile } = await octokit.repos.getContents({
       ...settings,
@@ -113,13 +118,14 @@ async function run() {
   const currentVersion = await latestTag()
   const commits = await getCommits(currentVersion)
   const { newVersion } = bump(currentVersion, commits)
-  const sha = await updatePackageJson(newVersion)
+  const sha = await updatePackageJson(newVersion, currentVersion)
 
   const isRollback = github.context.ref !== 'refs/heads/master'
 
   const name = isRollback
     ? `v${newVersion} - Rollback of ${currentVersion}`
     : `v${newVersion}`
+
   try {
     const { data } = await octokit.git.createTag({
       ...settings,

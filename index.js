@@ -49,6 +49,8 @@ async function getCommits(currentVersion) {
       head: 'master',
     });
     
+    console.log(data.commits)
+    
     data.commits.forEach(({ commit }) => {
       const { message } = commit
 

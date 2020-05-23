@@ -43,10 +43,6 @@ async function latestTag() {
 async function getCommits(currentVersion) {
   try {
     const commits = {}
-    const { data } = await octokit.repos.listCommits({
-      ...settings,
-      ...(currentVersion && { sha: `refs/tags/${currentVersion}` })
-    })
     const { data } = await octokit.repos.compareCommits({
       ...settings,
       base: 'master',

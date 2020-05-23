@@ -110,7 +110,7 @@ async function updatePackageJson(newVersion) {
 async function run() {
   const currentVersion = await latestTag()
   const commits = await getCommits(currentVersion)
-  const { newVersion } = bump(currentVersionName, commits)
+  const { newVersion } = bump(currentVersion, commits)
   const sha = await updatePackageJson(newVersion)
 
   const isRollback = github.context.ref !== 'refs/heads/master'

@@ -10,7 +10,6 @@ const settings = {
   owner: github.context.repo.owner,
   repo: github.context.repo.repo
 }
-console.log('test')
 
 const CHANGELOG_ORDER = [
   'feat',
@@ -48,6 +47,8 @@ async function getCommits(currentVersion) {
       ...settings,
       ...(currentVersion && { sha: `refs/tags/${currentVersion}` })
     })
+    
+    console.log(data)
     
     data.forEach(({ commit }) => {
       const { message } = commit

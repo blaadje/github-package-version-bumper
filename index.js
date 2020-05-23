@@ -56,7 +56,7 @@ async function getCommits(currentVersionSha) {
     const commits = {}
     const { data } = await octokit.repos.listCommits({
       ...settings,
-      sha: currentVersionSha
+      ...(currentVersionSha && { sha: currentVersionSha })
     })
 
     console.log(data)

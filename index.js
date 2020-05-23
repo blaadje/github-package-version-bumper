@@ -127,27 +127,30 @@ async function run() {
   const name = isRollback
     ? `v${newVersion} - Rollback of ${currentVersion}`
     : `v${newVersion}`
+  try {
+    const { data } = await octokit.git.createTag({
+      ...settings,
+      tag: `v${newVersion}`,
+      message: name,
+      object: sha,
+      type: 'commit'
+    })
 
-  const { data } = await octokit.git.createTag({
-    ...settings,
-    tag: `v${newVersion}`,
-    message: name,
-    object: sha,
-    type: 'commit'
-  })
+    await octokit.git.createRef({
+      ...settings,
+      ref: `refs/tags/v${newVersion}`,
+      sha: data.sha
+    })
 
-  await octokit.git.createRef({
-    ...settings,
-    ref: `refs/tags/v${newVersion}`,
-    sha: data.sha
-  })
-
-  await octokit.repos.createRelease({
-    ...settings,
-    tag_name: `v${newVersion}`,
-    name,
-    draft: true
-  })
+    await octokit.repos.createRelease({
+      ...settings,
+      tag_name: `v${newVersion}`,
+      name,
+      draft: true
+    })
+  } catch (error) {
+    core.setFailed(error.message)
+  }
 }
 
 run()

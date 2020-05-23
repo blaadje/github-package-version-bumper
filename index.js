@@ -24,8 +24,6 @@ const CHANGELOG_ORDER = [
 ]
 
 function bump(previousVersion = '0.0.0', commits = {}) {
-  console.log(previousVersion)
-  console.log(commits)
   const hasFeat = commits.feat && commits.feat.length > 0
   const bumpType = hasFeat ? 'minor' : 'patch'
 
@@ -58,8 +56,6 @@ async function getCommits(currentVersionSha) {
       ...settings,
       ...(currentVersionSha && { sha: currentVersionSha })
     })
-
-    console.log(data)
     
     data.forEach(({ commit }) => {
       const { message } = commit

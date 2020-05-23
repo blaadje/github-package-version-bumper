@@ -40,12 +40,7 @@ async function latestTag() {
       return {}
     }
 
-    const lastTag = data[0]
-
-    return {
-      currentVersionSha: lastTag.commit.sha,
-      currentVersionName: lastTag.name
-    }
+    return data.length && data[0].name
   } catch (error) {
     core.setFailed(error.message)
   }
@@ -119,7 +114,7 @@ async function updatePackageJson(newVersion) {
 }
 
 async function run() {
-  const { currentVersion } = await latestTag()
+  const currentVersion = await latestTag()
   const commits = await getCommits(currentVersion)
   const { newVersion } = bump(currentVersionName, commits)
   const sha = await updatePackageJson(newVersion)

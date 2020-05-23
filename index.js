@@ -33,12 +33,6 @@ function bump(previousVersion = '0.0.0', commits = {}) {
 async function latestTag() {
   try {
     const { data } = await octokit.repos.listTags(settings)
-    
-    console.log(data)
-
-    if (!data.lenght) {
-      return {}
-    }
 
     return data.length && data[0].name
   } catch (error) {

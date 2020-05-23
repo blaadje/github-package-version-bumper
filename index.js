@@ -34,7 +34,7 @@ function bump(previousVersion = '0.0.0', commits = {}) {
 async function latestTag() {
   try {
     const { data } = await octokit.repos.listTags(settings)
-    console.log(data)
+
     if (!data.lenght) {
       return {}
     }
@@ -58,6 +58,8 @@ async function getCommits(currentVersionSha) {
       sha: currentVersionSha
     })
 
+    console.log(data)
+    
     data.forEach(({ commit }) => {
       const { message } = commit
 

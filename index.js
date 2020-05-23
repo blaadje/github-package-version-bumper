@@ -48,9 +48,8 @@ async function getCommits(currentVersion) {
       base: `refs/tags/${currentVersion}`,
       head: 'master',
     });
-    console.log(data)
     
-    data.forEach(({ commit }) => {
+    data.commits.forEach(({ commit }) => {
       const { message } = commit
 
       if (!message) {

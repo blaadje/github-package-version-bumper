@@ -34,7 +34,7 @@ async function latestTag() {
   try {
     const { data } = await octokit.repos.listTags(settings)
 
-    return data.length && data[0].name
+    return (data.length && data[0].name) || undefined
   } catch (error) {
     core.setFailed(error.message)
   }
@@ -48,8 +48,6 @@ async function getCommits(currentVersion) {
       base: currentVersion ? `refs/tags/${currentVersion}` : 'head',
       head: 'master',
     });
-    
-    console.log(data.commits)
     
     data.commits.forEach(({ commit }) => {
       const { message } = commit

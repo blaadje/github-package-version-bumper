@@ -34,8 +34,10 @@ function bump(previousVersion = '0.0.0', commits = {}) {
 async function latestTag() {
   try {
     const { data } = await octokit.repos.listTags(settings)
-
-    return (data.length && data[0].name) || undefined
+    console.log(data)
+    return {
+      currentVersion: (data.length && data[0].name) || undefined
+    }
   } catch (error) {
     core.setFailed(error.message)
   }
@@ -106,7 +108,7 @@ async function updatePackageJson(newVersion) {
 }
 
 async function run() {
-  const currentVersion = await latestTag()
+  const { currentVersion } = await latestTag()
   const commits = await getCommits()
   const { newVersion } = bump(currentVersion, commits)
   const sha = await updatePackageJson(newVersion)
